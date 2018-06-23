@@ -72,14 +72,24 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="ReportServiceTest.java" pinned="false" current-in-tab="true">
+      <file leaf-file-name="ReportServiceTest.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/test/java/com/jpmorgan/test1/service/ReportServiceTest.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.4460285" vertical-offset="956" max-vertical-offset="1938">
+            <state vertical-scroll-proportion="0.0" vertical-offset="956" max-vertical-offset="1938">
               <caret line="82" column="65" selection-start-line="82" selection-start-column="65" selection-end-line="82" selection-end-column="65" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="README.md" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/README.md">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.03552769" vertical-offset="0" max-vertical-offset="957">
+              <caret line="2" column="85" selection-start-line="2" selection-start-column="85" selection-end-line="2" selection-end-column="85" />
+              <folding />
             </state>
           </provider>
         </entry>
@@ -161,6 +171,7 @@
         <option value="$PROJECT_DIR$/src/test/java/com/jpmorgan/test1/model/InstructionTest.java" />
         <option value="$PROJECT_DIR$/src/test/java/com/jpmorgan/test1/helper/InstructionHelper.java" />
         <option value="$PROJECT_DIR$/src/test/java/com/jpmorgan/test1/service/ReportServiceTest.java" />
+        <option value="$PROJECT_DIR$/README.md" />
       </list>
     </option>
   </component>
@@ -1051,11 +1062,19 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/test/java/com/jpmorgan/test1/service/ReportServiceTest.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.4460285" vertical-offset="956" max-vertical-offset="1938">
+        <state vertical-scroll-proportion="0.0" vertical-offset="956" max-vertical-offset="1938">
           <caret line="82" column="65" selection-start-line="82" selection-start-column="65" selection-end-line="82" selection-end-column="65" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/README.md">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.03552769" vertical-offset="0" max-vertical-offset="957">
+          <caret line="2" column="85" selection-start-line="2" selection-start-column="85" selection-end-line="2" selection-end-column="85" />
+          <folding />
         </state>
       </provider>
     </entry>
