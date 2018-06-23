@@ -1,5 +1,6 @@
 package com.jpmorgan.test1.service;
 
+import com.google.common.collect.Lists;
 import com.jpmorgan.test1.model.Instruction;
 import com.jpmorgan.test1.model.Operation;
 import com.jpmorgan.test1.model.Ranking;
@@ -25,8 +26,13 @@ public class ReportService {
      * For a given list of {@link com.jpmorgan.test1.model.Instruction}s it generates the report per days
      *
      * @param instructions
+     *      the list of instructions for which the report has to be generated
+     *
+     * @return the report as a list of strings
      */
-    public void generateReport(List<Instruction> instructions) {
+    public List<String> generateReport(List<Instruction> instructions) {
+
+        List<String> report = Lists.newArrayList();
 
         //partition the instructions based on their settlementDate
         Map<DateTime, List<Instruction>> instructionsBySettlementDate = instructions.stream().collect(Collectors.groupingBy(Instruction::getSettlementDate));
@@ -34,12 +40,13 @@ public class ReportService {
         SortedSet<DateTime> keys = new TreeSet<>(instructionsBySettlementDate.keySet());
 
         for (DateTime key : keys) {
-            System.out.println("****");
-            System.out.println("Processing date: " + key.toString("YYYY-MM-dd"));
+            report.add("Processing date: " + key.toString("YYYY-MM-dd"));
             List<Instruction> dailyInstructions = instructionsBySettlementDate.get(key);
 
-            generateDailyReport(dailyInstructions);
+            report.addAll(generateDailyReport(dailyInstructions));
         }
+
+        return report;
     }
 
     /**
@@ -48,7 +55,7 @@ public class ReportService {
      * @param dailyInstructions
      *          the list containing the instructions on which the report will be generated
      */
-    private void generateDailyReport(List<Instruction> dailyInstructions) {
+    private List<String> generateDailyReport(List<Instruction> dailyInstructions) {
 
         BigDecimal incomingValue = BigDecimal.ZERO;
         BigDecimal outgoingValue = BigDecimal.ZERO;
@@ -70,8 +77,12 @@ public class ReportService {
         List<Ranking> orderedIncoming = incomingRanking.values().stream().sorted(Collections.reverseOrder()).collect(Collectors.toList());
         List<Ranking> orderedOutgoing = outgoingRanking.values().stream().sorted(Collections.reverseOrder()).collect(Collectors.toList());
 
-        printReport(incomingValue, orderedIncoming, Operation.BUY);
-        printReport(outgoingValue, orderedOutgoing, Operation.SELL);
+        List<String> report = Lists.newArrayList();
+
+        report.addAll(formatReport(incomingValue, orderedIncoming, Operation.BUY));
+        report.addAll(formatReport(outgoingValue, orderedOutgoing, Operation.SELL));
+
+        return report;
     }
 
     /**
@@ -83,24 +94,26 @@ public class ReportService {
      * @param operation
      *          the type of {@link com.jpmorgan.test1.model.Operation}
      */
-    private void printReport(BigDecimal value, List<Ranking> rankings, Operation operation) {
+    private List<String> formatReport(BigDecimal value, List<Ranking> rankings, Operation operation) {
+
+        List<String> report = Lists.newArrayList();
 
         switch (operation) {
             case BUY:
-                System.out.println("INCOMING RANKINGS:");
-                System.out.println(String.format(TOTAL_INCOMING, value.doubleValue()));
+                report.add(String.format(TOTAL_INCOMING, value.doubleValue()));
                 break;
 
             case SELL:
-                System.out.println("OUTGOING RANKINGS:");
-                System.out.println(String.format(TOTAL_OUTGOING, value.doubleValue()));
+                report.add(String.format(TOTAL_OUTGOING, value.doubleValue()));
                 break;
         }
 
         for (int rank = 0; rank < rankings.size(); rank ++) {
 
-            System.out.println(String.format(DAILY_RANK, rankings.get(rank).getEntity(), rank+1, rankings.get(rank).getTotalValue().doubleValue()));
+            report.add(String.format(DAILY_RANK, rankings.get(rank).getEntity(), rank+1, rankings.get(rank).getTotalValue().doubleValue()));
         }
+
+        return report;
     }
 
     /**

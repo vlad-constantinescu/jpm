@@ -62,7 +62,9 @@ public class Main {
 
         List<Instruction> instructions = Lists.newArrayList(i1, i2, i11, i3);
 
-        reportService.generateReport(instructions);
+        List<String> report = reportService.generateReport(instructions);
+
+        report.forEach(System.out::println);
 
 
     }
