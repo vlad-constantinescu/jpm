@@ -4,9 +4,10 @@ import org.joda.time.DateTime;
 
 import java.math.BigDecimal;
 import java.time.DayOfWeek;
-import java.util.Date;
 
 /**
+ * Model class used to store an Instruction
+ *
  * @author Vlad Constantinescu
  */
 public class Instruction {
@@ -31,14 +32,13 @@ public class Instruction {
         this.price = builder.price;
 
         calculateSettlementDate();
-        calculateValue();
+        calculateValueInUSD();
     }
 
-    public Instruction() {
-
-    }
-
-
+    /**
+     * Using Builder pattern for an easier time creating Instructions.
+     * To be noted that the Builder doesn't have SettlementDate or ValueInUSD fields, which will be calculated when creating the actual Instruction object
+     */
     public static class Builder {
 
         private String entity;
@@ -98,35 +98,18 @@ public class Instruction {
         return operation;
     }
 
-    public Currency getCurrency() {
-        return currency;
-    }
-
-    public DateTime getInstructionDate() {
-        return instructionDate;
-    }
-
     public DateTime getSettlementDate() {
         return settlementDate;
-    }
-
-    public long getUnits() {
-        return units;
-    }
-
-    public BigDecimal getFx() {
-        return fx;
-    }
-
-    public BigDecimal getPrice() {
-        return price;
     }
 
     public BigDecimal getValueInUSD() {
         return valueInUSD;
     }
 
-    public void calculateSettlementDate(){
+    /**
+     * Calculates the settlement date based on the business rules
+     */
+    private void calculateSettlementDate(){
 
         if (isWorkingDay(instructionDate)){
 
@@ -137,6 +120,14 @@ public class Instruction {
         }
     }
 
+    /**
+     * Checks if the instructionDate parameter is a working day
+     *
+     * @param instructionDate
+     *          the date to be verified
+     *
+     * @return true if it is considered working day, false otherwise
+     */
     private boolean isWorkingDay(DateTime instructionDate) {
 
         DayOfWeek dayOfWeek = DayOfWeek.of(instructionDate.getDayOfWeek());
@@ -156,6 +147,15 @@ public class Instruction {
         return true;
     }
 
+    /**
+     * Calculate the next working day based on the given parameter.
+     * Note: this works correctly even for days that aren't during the weekend
+     *
+     * @param instructionDate
+     *          the date from which the next working day is being calculated
+     *
+     * @return the date of the next working date
+     */
     private DateTime nextWorkingDay(DateTime instructionDate) {
 
         DayOfWeek dayOfWeek = DayOfWeek.of(instructionDate.getDayOfWeek());
@@ -181,7 +181,10 @@ public class Instruction {
         return new DateTime(instructionDate).plusDays(offset);
     }
 
-    private void calculateValue() {
+    /**
+     * Calculates the total value in USD of the instruction and saves it in the valueInUSD variable, as it only has to be calculated once, based on the business rule.
+     */
+    private void calculateValueInUSD() {
 
         valueInUSD = fx.multiply(BigDecimal.valueOf(units)).multiply(price);
     }

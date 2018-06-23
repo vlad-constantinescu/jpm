@@ -10,6 +10,8 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 /**
+ * Service used to generate the daily text incoming/outgoing report
+ *
  * @author Vlad Constantinescu
  */
 
@@ -19,9 +21,16 @@ public class ReportService {
     private static final String TOTAL_OUTGOING = "Total outgoing value: %f";
     private static final String DAILY_RANK = "%s is rank %d (total %f)";
 
+    /**
+     * For a given list of {@link com.jpmorgan.test1.model.Instruction}s it generates the report per days
+     *
+     * @param instructions
+     */
     public void generateReport(List<Instruction> instructions) {
 
+        //partition the instructions based on their settlementDate
         Map<DateTime, List<Instruction>> instructionsBySettlementDate = instructions.stream().collect(Collectors.groupingBy(Instruction::getSettlementDate));
+        //sort the partition keys so the report would be in chronological order
         SortedSet<DateTime> keys = new TreeSet<>(instructionsBySettlementDate.keySet());
 
         for (DateTime key : keys) {
@@ -33,6 +42,12 @@ public class ReportService {
         }
     }
 
+    /**
+     * For a list of reports it calculates the total incoming and outgoing values, as well as ranking each entity based on its total value
+     *
+     * @param dailyInstructions
+     *          the list containing the instructions on which the report will be generated
+     */
     private void generateDailyReport(List<Instruction> dailyInstructions) {
 
         BigDecimal incomingValue = BigDecimal.ZERO;
@@ -51,6 +66,7 @@ public class ReportService {
             }
         }
 
+        //extract and sort in descending order based on totalValue for each Instruction entity
         List<Ranking> orderedIncoming = incomingRanking.values().stream().sorted(Collections.reverseOrder()).collect(Collectors.toList());
         List<Ranking> orderedOutgoing = outgoingRanking.values().stream().sorted(Collections.reverseOrder()).collect(Collectors.toList());
 
@@ -58,6 +74,15 @@ public class ReportService {
         printReport(outgoingValue, orderedOutgoing, Operation.SELL);
     }
 
+    /**
+     * Prints at the console the total daily value and the rankings for that day
+     * @param value
+     *          the total daily value
+     * @param rankings
+     *          the ordered rankings list
+     * @param operation
+     *          the type of {@link com.jpmorgan.test1.model.Operation}
+     */
     private void printReport(BigDecimal value, List<Ranking> rankings, Operation operation) {
 
         switch (operation) {
@@ -78,16 +103,32 @@ public class ReportService {
         }
     }
 
-    private BigDecimal processInstruction(Instruction ins, Map<String, Ranking> incomingRanking, BigDecimal incomingValue) {
+    /**
+     * Processes the given Instructions, adding it's valueIsUSD to the totalValue, as well as inserting (or updating) the rankingMap
+     *
+     * @param instruction
+     *          the {@link com.jpmorgan.test1.model.Instruction} to be processed
+     * @param rankingMap
+     *          the map containing the {@link Ranking} objects calculated based on the previously processed Instructions
+     * @param totalValue
+     *          the current totalValue
+     *
+     * @return the new totalValue
+     */
+    private BigDecimal processInstruction(Instruction instruction, Map<String, Ranking> rankingMap, BigDecimal totalValue) {
 
         BigDecimal currentValue = BigDecimal.ZERO;
-        if (incomingRanking.containsKey(ins.getEntity())) {
-            currentValue = incomingRanking.get(ins.getEntity()).getTotalValue();
+
+        //this is used in case in the same day we have more than 1 instruction for the same entity (e.g. we have 2 BUY operations for FOO entity)
+        if (rankingMap.containsKey(instruction.getEntity())) {
+            currentValue = rankingMap.get(instruction.getEntity()).getTotalValue();
         }
 
-        incomingRanking.put(ins.getEntity(), new Ranking(ins.getEntity(), ins.getValueInUSD()));
+        //put or update the rankingMap with the new Ranking
+        rankingMap.put(instruction.getEntity(), new Ranking(instruction.getEntity(), instruction.getValueInUSD().add(currentValue)));
 
-        return incomingValue.add(ins.getValueInUSD());
+        //return the newTotalValue
+        return totalValue.add(instruction.getValueInUSD());
     }
 
 }

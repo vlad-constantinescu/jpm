@@ -31,6 +31,16 @@ public class Main {
                 .build();
 
         Instruction i11 = new Instruction.Builder()
+                .withEntity("foo")
+                .withOperation(Operation.BUY)
+                .withFx(new BigDecimal("0.5"))
+                .withCurrency(Currency.SGP)
+                .withInstructionDate(new DateTime("2016-01-02"))
+                .withUnits(100)
+                .withPrice(new BigDecimal("100.25"))
+                .build();
+
+        Instruction i3 = new Instruction.Builder()
                 .withEntity("boo")
                 .withOperation(Operation.BUY)
                 .withFx(new BigDecimal("0.5"))
@@ -50,7 +60,7 @@ public class Main {
                 .withPrice(new BigDecimal("150.5"))
                 .build();
 
-        List<Instruction> instructions = Lists.newArrayList(i1, i2, i11);
+        List<Instruction> instructions = Lists.newArrayList(i1, i2, i11, i3);
 
         reportService.generateReport(instructions);
 

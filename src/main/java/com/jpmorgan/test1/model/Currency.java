@@ -1,6 +1,8 @@
 package com.jpmorgan.test1.model;
 
 /**
+ * Enum used to define the available currency
+ *
  * @author Vlad Constantinescu
  */
 public enum Currency {
@@ -10,10 +12,5 @@ public enum Currency {
     GBP,
     SAR,
     SGP,
-    USD;
-
-    public boolean isSundayToThursdayWorkWeek(){
-
-        return this == AED || this == SAR;
-    }
+    USD
 }

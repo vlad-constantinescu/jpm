@@ -3,6 +3,8 @@ package com.jpmorgan.test1.model;
 import java.math.BigDecimal;
 
 /**
+ * Model used to store the entity and totalValue of an Instruction to be sorted and ranked
+ *
  * @author Vlad Constantinescu
  */
 public class Ranking implements Comparable<Ranking>{
